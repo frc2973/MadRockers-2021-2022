@@ -8,7 +8,7 @@
 
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
-#include <frc/RobotDrive.h>
+#include <frc/drive/MecanumDrive.h>
 #include <frc/VictorSP.h>
 #include <rev/CANSparkMax.h>
 
@@ -23,7 +23,11 @@ using namespace std;
 class Robot : public frc::TimedRobot {
  public:
   CustomController xbox;
-  RobotDrive driveTrain;
+  MecanumDrive driveTrain;
+  VictorSP left_front;
+  VictorSP left_back;
+  VictorSP right_front;
+  VictorSP right_back;
 
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -36,7 +40,13 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  Robot() : xbox(Ports::XBOX), driveTrain(Ports::LEFT_FRONT, Ports::LEFT_BACK, Ports::RIGHT_FRONT, Ports::RIGHT_BACK) {}
+  Robot() : 
+  xbox(Ports::XBOX), 
+  driveTrain(left_front, left_back, right_front, right_back), 
+  left_front(Ports::LEFT_FRONT), 
+  left_back(Ports::LEFT_BACK), 
+  right_front(Ports::RIGHT_FRONT), 
+  right_back(Ports::RIGHT_BACK) {}
 
  private:
   frc::SendableChooser<std::string> m_chooser;

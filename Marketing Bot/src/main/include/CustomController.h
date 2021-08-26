@@ -91,6 +91,33 @@ class CustomController : public XboxController {
       return -GetRawAxis(5);
     }
 
+    /**
+     * Shortcut for getting the axis used for movement in the x-direction during mecanum driving.
+     * 
+     * @return The value of axis 0.
+     */
+    double GetXDrive() {
+      return GetRawAxis(0);
+    }
+
+    /**
+     * Shortcut for getting the axis used for movement in the y-direction during mecanum driving.
+     * 
+     * @return The value of axis 1.
+     */
+    double GetYDrive() {
+      return GetRawAxis(1);
+    }
+
+    /**
+     * Shortcut for getting the axis used for turning during mecanum driving.
+     * 
+     * @return The value of axis 4.
+     */
+    double GetTurnDrive() {
+      return GetRawAxis(4);
+    }
+
   private:
     bool is_square;
     float deadzone;
