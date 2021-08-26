@@ -58,7 +58,9 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  driveTrain.TankDrive(xbox.GetLeftDrive(), xbox.GetRightDrive());
+}
 
 void Robot::DisabledInit() {}
 

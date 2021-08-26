@@ -62,11 +62,9 @@ namespace Ports {
         CAN_9 = 9
     };
 
-    const USB XBOX_DRIVER = USB::USB_0;
+    const USB XBOX = USB::USB_0;
 
-    const CAN LEFT_FRONT = CAN::CAN_1; //Placeholder ports at the moment
-    const CAN LEFT_BACK = CAN::CAN_2;
-    const CAN RIGHT_FRONT = CAN::CAN_3;
-    const CAN RIGHT_BACK = CAN::CAN_4;
+    const PWM LEFT_DRIVE = PWM::PWM_0;
+    const PWM RIGHT_DRIVE = PWM::PWM_1;
 
 }

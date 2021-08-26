@@ -73,6 +73,24 @@ class CustomController : public XboxController {
         }
     }
 
+    /**
+     * Shortcut for getting the axis (in the correct direction) used on the left wheels during tank driving.
+     * 
+     * @return The value of axis 1, inverted.
+     */
+    double GetLeftDrive() {
+      return -GetRawAxis(1);
+    }
+
+    /**
+     * Shortcut for getting the axis (in the correct direction) used on the right wheels during tank driving.
+     * 
+     * @return The value of axis 5, inverted.
+     */
+    double GetRightDrive() {
+      return -GetRawAxis(5);
+    }
+
   private:
     bool is_square;
     float deadzone;
