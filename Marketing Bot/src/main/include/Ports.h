@@ -64,7 +64,9 @@ namespace Ports {
 
     const USB XBOX = USB::USB_0;
 
-    const PWM LEFT_DRIVE = PWM::PWM_0;
-    const PWM RIGHT_DRIVE = PWM::PWM_1;
+    const PWM LEFT_FRONT = PWM::PWM_0;
+    const PWM LEFT_BACK = PWM::PWM_1;
+    const PWM RIGHT_FRONT = PWM::PWM_2;
+    const PWM RIGHT_BACK = PWM::PWM_3;
 
 }

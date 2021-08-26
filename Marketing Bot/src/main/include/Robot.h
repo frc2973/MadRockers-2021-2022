@@ -36,7 +36,7 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  Robot() : xbox(Ports::XBOX), driveTrain(Ports::LEFT_DRIVE, Ports::RIGHT_DRIVE) {}
+  Robot() : xbox(Ports::XBOX), driveTrain(Ports::LEFT_FRONT, Ports::LEFT_BACK, Ports::RIGHT_FRONT, Ports::RIGHT_BACK) {}
 
  private:
   frc::SendableChooser<std::string> m_chooser;
