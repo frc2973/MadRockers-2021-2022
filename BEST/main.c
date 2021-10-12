@@ -46,13 +46,15 @@ void drive() {
 void move_servo() {
 	if(vexRT[Btn7U] == 1){
 		while(vexRT[Btn7U] == 1) {}
-		motor[l_claw] = 127;
-		motor[r_claw] = 127;
+		motor[l_claw] = 10;
+	}
+	if(vexRT[Btn7L] == 1){
+		while(vexRT[Btn7L] == 1) {}
+		motor[l_claw] = 60;
 	}
 	if(vexRT[Btn7D] == 1){
 		while(vexRT[Btn7D] == 1) {}
-		motor[l_claw] = -127;
-		motor[r_claw] = -127;
+		motor[l_claw] = 87;
 	}
 }
 
