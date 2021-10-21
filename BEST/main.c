@@ -1,5 +1,6 @@
 #pragma config(Motor,  port2,           r_drive,       tmotorServoContinuousRotation, openLoop, reversed)
 #pragma config(Motor,  port3,           l_drive,       tmotorServoContinuousRotation, openLoop)
+#pragma config(Motor,  port4,           lift,          tmotorServoContinuousRotation, openLoop, reversed)
 #pragma config(Motor,  port5,           l_claw,        tmotorServoStandard, openLoop)
 #pragma config(Motor,  port6,           r_claw,        tmotorServoStandard, openLoop, reversed)
 #pragma config(Motor,  port7,           grabber,       tmotorServoStandard, openLoop, reversed)
@@ -69,6 +70,16 @@ void claw() {
 		while(vexRT[Btn8D] == 1) {}
 		motor[l_claw] = 0;
 		motor[r_claw] = 0;
+	}
+
+	if(vexRT[Btn5U] == 1){
+		motor[lift] = 127;
+	}
+	else if(vexRT[Btn5D] == 1){
+		motor[lift] = -40;
+	}
+	else {
+		motor[lift] = 0;
 	}
 }
 
