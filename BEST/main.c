@@ -95,9 +95,10 @@ void claw() {
 
 void auto(){
 	int toward = 200;
-	int back = 225;
+	int back = 250;
 	if(vexRT[Btn6D] == 1){
 		motor[grabber] = 87;
+		halfway = true;
 		motor[l_drive] = -100;
 		motor[r_drive] = -100;
 		int i = 0;
@@ -112,6 +113,7 @@ void auto(){
 		motor[r_drive] = 0;
 		motor[l_claw] = 0;
 		motor[r_claw] = 0;
+		closed = true;
 		wait(0.5);
 		motor[l_drive] = 100;
 		motor[r_drive] = 100;
@@ -126,6 +128,23 @@ void auto(){
 	}
 }
 
+void adjust() {
+	if(vexRT[Btn8L] == 1) {
+		while(vexRT[Btn8L] == 1) {}
+		motor[l_claw] = -127;
+		motor[r_claw] = -127;
+		wait(0.3);
+		motor[l_drive] = 65;
+		motor[r_drive] = 65;
+		wait(0.25);
+		motor[l_drive] = 0;
+		motor[r_drive] = 0;
+		wait(0.3);
+		motor[l_claw] = 0;
+		motor[r_claw] = 0;
+		closed = true;
+	}
+}
 task main()
 {
 	motor[grabber] = 87;
@@ -136,5 +155,6 @@ task main()
 		light_grabber();
 		claw();
 		auto();
+		adjust();
 	}
 }
