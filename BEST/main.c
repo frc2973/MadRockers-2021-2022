@@ -1,5 +1,5 @@
-#pragma config(Motor,  port2,           r_drive,       tmotorServoContinuousRotation, openLoop, reversed)
-#pragma config(Motor,  port3,           l_drive,       tmotorServoContinuousRotation, openLoop)
+#pragma config(Motor,  port2,           r_drive,       tmotorServoContinuousRotation, openLoop)
+#pragma config(Motor,  port3,           l_drive,       tmotorServoContinuousRotation, openLoop, reversed)
 #pragma config(Motor,  port4,           lift,          tmotorServoContinuousRotation, openLoop, reversed)
 #pragma config(Motor,  port5,           l_claw,        tmotorServoStandard, openLoop)
 #pragma config(Motor,  port6,           r_claw,        tmotorServoStandard, openLoop, reversed)
@@ -9,32 +9,34 @@
 //Make sure to use Natural Language 2.0
 
 bool reversed = false;
+bool halfway = true;
+bool closed = true;
 
 void drive() {
 	int deadzone = 25;
 	if(reversed) {
-		if(abs(vexRT[Ch2]) > deadzone) {
-			motor[l_drive] = -vexRT[Ch2];
+		if(abs(vexRT[Ch3]) > deadzone) {
+			motor[l_drive] = -vexRT[Ch3];
 		}
 		else {
 			motor[l_drive] = 0;
 		}
-		if(abs(vexRT[Ch3]) > deadzone) {
-			motor[r_drive] = -vexRT[Ch3];
+		if(abs(vexRT[Ch2]) > deadzone) {
+			motor[r_drive] = -vexRT[Ch2];
 		}
 		else {
 			motor[r_drive] = 0;
 		}
 	}
 	else {
-		if(abs(vexRT[Ch3]) > deadzone) {
-			motor[l_drive] = vexRT[Ch3];
+		if(abs(vexRT[Ch2]) > deadzone) {
+			motor[l_drive] = vexRT[Ch2];
 		}
 		else {
 			motor[l_drive] = 0;
 		}
-		if(abs(vexRT[Ch2]) > deadzone) {
-			motor[r_drive] = vexRT[Ch2];
+		if(abs(vexRT[Ch3]) > deadzone) {
+			motor[r_drive] = vexRT[Ch3];
 		}
 		else {
 			motor[r_drive] = 0;
@@ -48,30 +50,36 @@ void drive() {
 }
 
 void light_grabber() {
-	if(vexRT[Btn7U] == 1){
-		while(vexRT[Btn7U] == 1) {}
-		motor[grabber] = 10;
-	}
-	if(vexRT[Btn7L] == 1){
-		while(vexRT[Btn7L] == 1) {}
-		motor[grabber] = 60;
-	}
 	if(vexRT[Btn7D] == 1){
 		while(vexRT[Btn7D] == 1) {}
+		halfway = true;
 		motor[grabber] = 87;
+	}
+	if(vexRT[Btn7U] == 1){
+		while(vexRT[Btn7U] == 1) {}
+		if(halfway) {
+			motor[grabber] = 60;
+			halfway = false;
+		}
+		else {
+			motor[grabber] = 10;
+		}
 	}
 }
 
 void claw() {
 	if(vexRT[Btn8U] == 1){
 		while(vexRT[Btn8U] == 1) {}
-		motor[l_claw] = -127;
-		motor[r_claw] = -127;
-	}
-	if(vexRT[Btn8D] == 1){
-		while(vexRT[Btn8D] == 1) {}
-		motor[l_claw] = 0;
-		motor[r_claw] = 0;
+		if(closed) {
+			motor[l_claw] = -127;
+			motor[r_claw] = -127;
+			closed = false;
+		}
+		else {
+			motor[l_claw] = 0;
+			motor[r_claw] = 0;
+			closed = true;
+		}
 	}
 
 	if(vexRT[Btn5U] == 1){
@@ -90,8 +98,8 @@ void auto(){
 	int back = 225;
 	if(vexRT[Btn6D] == 1){
 		motor[grabber] = 87;
-		motor[l_drive] = 100;
-		motor[r_drive] = 100;
+		motor[l_drive] = -100;
+		motor[r_drive] = -100;
 		int i = 0;
 		while(i != toward){
 			if(vexRT[Btn6U] == 1){
@@ -105,8 +113,8 @@ void auto(){
 		motor[l_claw] = 0;
 		motor[r_claw] = 0;
 		wait(0.5);
-		motor[l_drive] = -100;
-		motor[r_drive] = -100;
+		motor[l_drive] = 100;
+		motor[r_drive] = 100;
 		i = 0;
 		while(i != back){
 			if(vexRT[Btn6U] == 1){
@@ -121,6 +129,8 @@ void auto(){
 task main()
 {
 	motor[grabber] = 87;
+	motor[l_claw] = 0;
+	motor[r_claw] = 0;
 	while(true) {
 		drive();
 		light_grabber();
