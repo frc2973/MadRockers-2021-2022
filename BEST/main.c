@@ -55,10 +55,10 @@ void light_grabber() {
 		motor[grabber] = 87;
 	}
 	if(vexRT[Btn7U] == 1){
-		while(vexRT[Btn7U] == 1) {}
 		if(halfway) {
 			motor[grabber] = 60;
 			halfway = false;
+			while(vexRT[Btn7U] == 1) {}
 		}
 		else {
 			motor[grabber] = 10;
@@ -68,7 +68,6 @@ void light_grabber() {
 
 void claw() {
 	if(vexRT[Btn8U] == 1){
-		while(vexRT[Btn8U] == 1) {}
 		if(closed) {
 			motor[l_claw] = -127;
 			motor[r_claw] = -127;
@@ -79,6 +78,7 @@ void claw() {
 			motor[r_claw] = 0;
 			closed = true;
 		}
+		while(vexRT[Btn8U] == 1) {}
 	}
 
 	if(vexRT[Btn5U] == 1){
