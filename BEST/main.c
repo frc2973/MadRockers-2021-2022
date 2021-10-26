@@ -51,7 +51,6 @@ void drive() {
 
 void light_grabber() {
 	if(vexRT[Btn7D] == 1){
-		while(vexRT[Btn7D] == 1) {}
 		halfway = true;
 		motor[grabber] = 87;
 	}
@@ -130,7 +129,6 @@ void auto(){
 
 void adjust() {
 	if(vexRT[Btn8L] == 1) {
-		while(vexRT[Btn8L] == 1) {}
 		motor[l_claw] = -127;
 		motor[r_claw] = -127;
 		wait(0.3);
