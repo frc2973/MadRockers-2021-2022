@@ -11,18 +11,25 @@
 bool reversed = false;
 bool halfway = true;
 bool closed = true;
+float pw = 0.1;
 
 void drive() {
-	int deadzone = 25;
+	int deadzone = 15;
 	if(reversed) {
 		if(abs(vexRT[Ch3]) > deadzone) {
-			motor[l_drive] = -vexRT[Ch3];
+			motor[l_drive] = -127 * vexRT[Ch3] / abs(vexRT[Ch3]);
+			wait(pw * abs(vexRT[Ch3]) / 127);
+			motor[l_drive] = 0;
+			wait(pw * (1 - abs(vexRT[Ch3]) / 127));
 		}
 		else {
 			motor[l_drive] = 0;
 		}
 		if(abs(vexRT[Ch2]) > deadzone) {
-			motor[r_drive] = -vexRT[Ch2];
+			motor[r_drive] = -127 * vexRT[Ch2] / abs(vexRT[Ch2]);
+			wait(pw * abs(vexRT[Ch2]) / 127);
+			motor[r_drive] = 0;
+			wait(pw * (1 - abs(vexRT[Ch2]) / 127));
 		}
 		else {
 			motor[r_drive] = 0;
@@ -30,13 +37,19 @@ void drive() {
 	}
 	else {
 		if(abs(vexRT[Ch2]) > deadzone) {
-			motor[l_drive] = vexRT[Ch2];
+			motor[l_drive] = 127 * vexRT[Ch2] / abs(vexRT[Ch2]);
+			wait(pw * abs(vexRT[Ch2]) / 127);
+			motor[l_drive] = 0;
+			wait(pw * (1 - abs(vexRT[Ch2]) / 127));
 		}
 		else {
 			motor[l_drive] = 0;
 		}
 		if(abs(vexRT[Ch3]) > deadzone) {
-			motor[r_drive] = vexRT[Ch3];
+			motor[r_drive] = 127 * vexRT[Ch3] / abs(vexRT[Ch3]);
+			wait(pw * abs(vexRT[Ch3]) / 127);
+			motor[r_drive] = 0;
+			wait(pw * (1 - abs(vexRT[Ch3]) / 127));
 		}
 		else {
 			motor[r_drive] = 0;
@@ -46,6 +59,15 @@ void drive() {
 	if(vexRT[Btn8R] == 1) {
 		while(vexRT[Btn8R] == 1) {}
 		reversed = !reversed;
+	}
+
+	if(vexRT[Btn7L] == 1) {
+		while(vexRT[Btn7L] == 1) {}
+		pw *= 2;
+	}
+	if(vexRT[Btn7R] == 1) {
+		while(vexRT[Btn7R] == 1) {}
+		pw *= 0.5;
 	}
 }
 
@@ -93,17 +115,17 @@ void claw() {
 }
 
 void auto(){
-	int toward = 170;
-	int back = 275;
+	int toward = 200;
+	int back = 250;
 	if(vexRT[Btn6D] == 1){
 		motor[grabber] = 87;
 		halfway = true;
 
 		float time = 0.5;
-		int from = 20;
+		int from = 0;
 		int to = 100;
 		for(int i = from; i < to; i++) {
-			motor[l_drive] = -((i + 80) - abs(i - 80)) / 2;
+			motor[l_drive] = -i;
 			motor[r_drive] = -i;
 			wait(time / (to - from));
 		}
@@ -122,8 +144,8 @@ void auto(){
 		motor[r_claw] = 0;
 		closed = true;
 		wait(0.5);
-		motor[l_drive] = 80;
-		motor[r_drive] = 80;
+		motor[l_drive] = 100;
+		motor[r_drive] = 100;
 		i = 0;
 		while(i != back){
 			if(vexRT[Btn6U] == 1){
@@ -151,6 +173,7 @@ void adjust() {
 		closed = true;
 	}
 }
+
 task main()
 {
 	motor[grabber] = 87;
