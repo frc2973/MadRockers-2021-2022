@@ -151,6 +151,7 @@ void adjust() {
 		closed = true;
 	}
 }
+
 task main()
 {
 	motor[grabber] = 87;

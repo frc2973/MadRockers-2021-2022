@@ -13,64 +13,6 @@ bool halfway = true;
 bool closed = true;
 float pw = 0.1;
 
-void drive() {
-	int deadzone = 15;
-	if(reversed) {
-		if(abs(vexRT[Ch3]) > deadzone) {
-			motor[l_drive] = -127 * vexRT[Ch3] / abs(vexRT[Ch3]);
-			wait(pw * abs(vexRT[Ch3]) / 127);
-			motor[l_drive] = 0;
-			wait(pw * (1 - abs(vexRT[Ch3]) / 127));
-		}
-		else {
-			motor[l_drive] = 0;
-		}
-		if(abs(vexRT[Ch2]) > deadzone) {
-			motor[r_drive] = -127 * vexRT[Ch2] / abs(vexRT[Ch2]);
-			wait(pw * abs(vexRT[Ch2]) / 127);
-			motor[r_drive] = 0;
-			wait(pw * (1 - abs(vexRT[Ch2]) / 127));
-		}
-		else {
-			motor[r_drive] = 0;
-		}
-	}
-	else {
-		if(abs(vexRT[Ch2]) > deadzone) {
-			motor[l_drive] = 127 * vexRT[Ch2] / abs(vexRT[Ch2]);
-			wait(pw * abs(vexRT[Ch2]) / 127);
-			motor[l_drive] = 0;
-			wait(pw * (1 - abs(vexRT[Ch2]) / 127));
-		}
-		else {
-			motor[l_drive] = 0;
-		}
-		if(abs(vexRT[Ch3]) > deadzone) {
-			motor[r_drive] = 127 * vexRT[Ch3] / abs(vexRT[Ch3]);
-			wait(pw * abs(vexRT[Ch3]) / 127);
-			motor[r_drive] = 0;
-			wait(pw * (1 - abs(vexRT[Ch3]) / 127));
-		}
-		else {
-			motor[r_drive] = 0;
-		}
-	}
-
-	if(vexRT[Btn8R] == 1) {
-		while(vexRT[Btn8R] == 1) {}
-		reversed = !reversed;
-	}
-
-	if(vexRT[Btn7L] == 1) {
-		while(vexRT[Btn7L] == 1) {}
-		pw *= 2;
-	}
-	if(vexRT[Btn7R] == 1) {
-		while(vexRT[Btn7R] == 1) {}
-		pw *= 0.5;
-	}
-}
-
 void light_grabber() {
 	if(vexRT[Btn7D] == 1){
 		halfway = true;
@@ -115,17 +57,17 @@ void claw() {
 }
 
 void auto(){
-	int toward = 200;
-	int back = 250;
+	int toward = 170;
+	int back = 275;
 	if(vexRT[Btn6D] == 1){
 		motor[grabber] = 87;
 		halfway = true;
 
 		float time = 0.5;
-		int from = 0;
+		int from = 20;
 		int to = 100;
 		for(int i = from; i < to; i++) {
-			motor[l_drive] = -i;
+			motor[l_drive] = -((i + 80) - abs(i - 80)) / 2;
 			motor[r_drive] = -i;
 			wait(time / (to - from));
 		}
@@ -144,8 +86,8 @@ void auto(){
 		motor[r_claw] = 0;
 		closed = true;
 		wait(0.5);
-		motor[l_drive] = 100;
-		motor[r_drive] = 100;
+		motor[l_drive] = 80;
+		motor[r_drive] = 80;
 		i = 0;
 		while(i != back){
 			if(vexRT[Btn6U] == 1){
@@ -174,11 +116,79 @@ void adjust() {
 	}
 }
 
-task main()
-{
-	motor[grabber] = 87;
-	motor[l_claw] = 0;
-	motor[r_claw] = 0;
+void drive() {
+	if(vexRT[Btn8R] == 1) {
+		while(vexRT[Btn8R] == 1) {}
+		reversed = !reversed;
+	}
+
+	if(vexRT[Btn7L] == 1) {
+		while(vexRT[Btn7L] == 1) {}
+		pw *= 2;
+	}
+	if(vexRT[Btn7R] == 1) {
+		while(vexRT[Btn7R] == 1) {}
+		pw *= 0.5;
+	}
+}
+
+task leftWheel() {
+	int deadzone = 15;
+	while(true) {
+		if(reversed) {
+			if(abs(vexRT[Ch3]) > deadzone) {
+				motor[l_drive] = -127 * vexRT[Ch3] / abs(vexRT[Ch3]);
+				wait(pw * abs(vexRT[Ch3]) / 127);
+				motor[l_drive] = 0;
+				wait(pw * (1 - abs(vexRT[Ch3]) / 127));
+			}
+			else {
+				motor[l_drive] = 0;
+			}
+		}
+		else {
+			if(abs(vexRT[Ch2]) > deadzone) {
+				motor[l_drive] = 127 * vexRT[Ch2] / abs(vexRT[Ch2]);
+				wait(pw * abs(vexRT[Ch2]) / 127);
+				motor[l_drive] = 0;
+				wait(pw * (1 - abs(vexRT[Ch2]) / 127));
+			}
+			else {
+				motor[l_drive] = 0;
+			}
+		}
+	}
+}
+
+task rightWheel() {
+	int deadzone = 15;
+	while(true) {
+		if(reversed) {
+			if(abs(vexRT[Ch2]) > deadzone) {
+				motor[r_drive] = -127 * vexRT[Ch2] / abs(vexRT[Ch2]);
+				wait(pw * abs(vexRT[Ch2]) / 127);
+				motor[r_drive] = 0;
+				wait(pw * (1 - abs(vexRT[Ch2]) / 127));
+			}
+			else {
+				motor[r_drive] = 0;
+			}
+		}
+		else {
+			if(abs(vexRT[Ch3]) > deadzone) {
+				motor[r_drive] = 127 * vexRT[Ch3] / abs(vexRT[Ch3]);
+				wait(pw * abs(vexRT[Ch3]) / 127);
+				motor[r_drive] = 0;
+				wait(pw * (1 - abs(vexRT[Ch3]) / 127));
+			}
+			else {
+				motor[r_drive] = 0;
+			}
+		}
+	}
+}
+
+task attachments() {
 	while(true) {
 		drive();
 		light_grabber();
@@ -186,4 +196,14 @@ task main()
 		auto();
 		adjust();
 	}
+}
+
+task main()
+{
+	motor[grabber] = 87;
+	motor[l_claw] = 0;
+	motor[r_claw] = 0;
+	startTask(leftWheel);
+	startTask(rightWheel):
+	startTask(attachments);
 }
