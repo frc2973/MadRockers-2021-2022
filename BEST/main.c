@@ -93,7 +93,7 @@ void claw() {
 }
 
 void auto(){
-	int toward = 170;
+	int toward = 150;
 	int back = 275;
 	if(vexRT[Btn6D] == 1){
 		motor[grabber] = 87;
@@ -103,7 +103,7 @@ void auto(){
 		int from = 20;
 		int to = 100;
 		for(int i = from; i < to; i++) {
-			motor[l_drive] = -((i + 80) - abs(i - 80)) / 2;
+			motor[l_drive] = -((i + 83) - abs(i - 83)) / 2;
 			motor[r_drive] = -i;
 			wait(time / (to - from));
 		}
@@ -142,7 +142,7 @@ void adjust() {
 		wait(0.3);
 		motor[l_drive] = 65;
 		motor[r_drive] = 65;
-		wait(0.25);
+		wait(0.18);
 		motor[l_drive] = 0;
 		motor[r_drive] = 0;
 		wait(0.3);
