@@ -103,7 +103,7 @@ void auto(){
 		int from = 20;
 		int to = 100;
 		for(int i = from; i < to; i++) {
-			motor[l_drive] = -((i + 83) - abs(i - 83)) / 2;
+			motor[l_drive] = -((i + 90) - abs(i - 90)) / 2;
 			motor[r_drive] = -i;
 			wait(time / (to - from));
 		}
