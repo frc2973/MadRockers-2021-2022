@@ -56,7 +56,7 @@ void light_grabber() {
 	}
 	if(vexRT[Btn7U] == 1){
 		if(halfway) {
-			motor[grabber] = 60;
+			motor[grabber] = 75;
 			halfway = false;
 			while(vexRT[Btn7U] == 1) {}
 		}
