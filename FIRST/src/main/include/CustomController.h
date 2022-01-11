@@ -1,4 +1,4 @@
-#include <frc/WPILib.h>
+#include <frc/XboxController.h>
 #include <cmath>
 
 using namespace frc;
@@ -71,50 +71,6 @@ class CustomController : public XboxController {
         else {
             return value;
         }
-    }
-    
-    bool isClimberUp() {
-      int value = GenericHID::GetPOV();
-      return value == 315 || value == 0 || value == 45;
-    }
-    
-    bool isClimberDown() {
-      int value = GenericHID::GetPOV();
-      return value == 180;
-    }
-    
-    bool isClimberLeft() {
-      int value = GenericHID::GetPOV();
-      return value == 225 || value == 270;
-    }
-    
-    bool isClimberRight() {
-      int value = GenericHID::GetPOV();
-      return value == 90 || value == 135;
-    }
-    
-    float GetLeftDriveTrain() {
-      return GetRawAxis(1);
-    }
-
-    float GetRightDriveTrain() {
-      return GetRawAxis(5);
-    }
-
-    bool GetAutoShootPressed() {
-      return XboxController::GetAButtonPressed();
-    }
-
-    bool GetAutoPickupPressed() {
-      return XboxController::GetBButtonPressed();
-    }
-
-    bool GetShootButtonPressed() {
-      return XboxController::GetXButtonPressed();
-    }
-
-    bool GetIntakeButtonPressed() {
-      return XboxController::GetYButtonPressed();
     }
 
   private:
