@@ -10,6 +10,7 @@
 #include <frc/smartdashboard/SendableChooser.h>
 
 #include "CustomController.h"
+#include "ports.h"
 
 class Robot : public frc::TimedRobot {
  public:

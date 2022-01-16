@@ -38,7 +38,7 @@ namespace Ports {
         ANALOG_3 = 3
     };
 
-    // XBox controllers
+    // Xbox controllers
     enum USB
     {
         USB_0 = 0,
@@ -48,7 +48,6 @@ namespace Ports {
     };
 
     // CAN
-
     enum CAN
     {
         CAN_0 = 0,
