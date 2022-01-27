@@ -58,7 +58,12 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  left_f.Set(xbox.GetLeftY());
+  left_b.Set(xbox.GetLeftY());
+  right_f.Set(xbox.GetRightY());
+  right_b.Set(xbox.GetRightY());
+}
 
 void Robot::DisabledInit() {}
 

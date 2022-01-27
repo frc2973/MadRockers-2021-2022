@@ -83,20 +83,20 @@ class CustomController : public XboxController {
     }
 
     /**
-     * Get the value of the x axis on the right stick. A deadzone is implemented.
-     *
-     * @return The value of the axis between -1 and 1.
-     */
-    double GetRightX() {
-      return GetRawAxis(1);
-    }
-
-    /**
      * Get the value of the y axis on the left stick. A deadzone is implemented.
      *
      * @return The value of the axis between -1 and 1.
      */
     double GetLeftY() {
+      return GetRawAxis(1);
+    }
+
+    /**
+     * Get the value of the x axis on the right stick. A deadzone is implemented.
+     *
+     * @return The value of the axis between -1 and 1.
+     */
+    double GetRightX() {
       return GetRawAxis(4);
     }
 
