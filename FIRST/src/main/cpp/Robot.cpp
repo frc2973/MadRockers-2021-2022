@@ -64,18 +64,8 @@ void Robot::TeleopPeriodic() {
   left_b.Set(-xbox.GetLeftY() * mult);
   right_f.Set(xbox.GetRightY() * mult);
   right_b.Set(xbox.GetRightY() * mult);
-  if(xbox.GetLeftBumper()) {
-    low_feed.Set(-0.25);
-  }
-  else {
-    low_feed.Set(0);
-  }
-  if(xbox.GetRightBumper()) {
-    top_feed.Set(-0.6);
-  }
-  else {
-    top_feed.Set(0);
-  }
+  low_feed.Set(xbox.GetLeftBumper() * -0.25);
+  top_feed.Set(xbox.GetRightBumper() * -0.6);
 }
 
 void Robot::DisabledInit() {}
