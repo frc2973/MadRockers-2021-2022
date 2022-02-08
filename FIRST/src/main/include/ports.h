@@ -68,4 +68,7 @@ namespace Ports {
     const CAN LEFT_BACK = CAN::CAN_2;
     const CAN RIGHT_FRONT = CAN::CAN_3;
     const CAN RIGHT_BACK = CAN::CAN_4;
+
+    const PWM LOW_FEED = PWM::PWM_0;
+    const PWM TOP_FEED = PWM::PWM_1;
 }

@@ -8,6 +8,7 @@
 
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/motorcontrol/VictorSP.h>
 #include <rev/CANSparkMax.h>
 
 #include "CustomController.h"
@@ -24,13 +25,17 @@ class Robot : public frc::TimedRobot {
   CANSparkMax left_b;
   CANSparkMax right_f;
   CANSparkMax right_b;
+  VictorSP low_feed;
+  VictorSP top_feed;
 
   Robot() : 
   xbox(Ports::XBOX_DRIVER), 
   left_f(Ports::LEFT_FRONT, CANSparkMax::MotorType::kBrushless), 
   left_b(Ports::LEFT_BACK, CANSparkMax::MotorType::kBrushless), 
   right_f(Ports::RIGHT_FRONT, CANSparkMax::MotorType::kBrushless), 
-  right_b(Ports::RIGHT_BACK, CANSparkMax::MotorType::kBrushless) {}
+  right_b(Ports::RIGHT_BACK, CANSparkMax::MotorType::kBrushless),
+  low_feed(Ports::LOW_FEED),
+  top_feed(Ports::TOP_FEED) {}
 
   void RobotInit() override;
   void RobotPeriodic() override;
