@@ -14,7 +14,7 @@ namespace Ports {
         DIO_9 = 9,
     };
 
-    // Robot PMW ports
+    // Robot PWM ports
     enum PWM
     {
         PWM_0 = 0,
