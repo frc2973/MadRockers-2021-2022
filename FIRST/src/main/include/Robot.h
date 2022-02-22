@@ -10,6 +10,8 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/motorcontrol/VictorSP.h>
 #include <rev/CANSparkMax.h>
+#include <rev/SparkMaxPIDController.h>
+#include <rev/SparkMaxRelativeEncoder.h>
 
 #include "CustomController.h"
 #include "ports.h"
@@ -20,22 +22,30 @@ using namespace rev;
 
 class Robot : public frc::TimedRobot {
  public:
-  CustomController xbox;
+  CustomController xbox1;
   CANSparkMax left_f;
   CANSparkMax left_b;
   CANSparkMax right_f;
   CANSparkMax right_b;
+  CANSparkMax shooter;
+  SparkMaxRelativeEncoder shooter_en = shooter.GetEncoder();
+  SparkMaxPIDController shooter_pid = shooter.GetPIDController();
   VictorSP low_feed;
   VictorSP top_feed;
+  VictorSP lift;
+  VictorSP intake;
 
   Robot() : 
-  xbox(Ports::XBOX_DRIVER), 
+  xbox1(Ports::XBOX_1), 
   left_f(Ports::LEFT_FRONT, CANSparkMax::MotorType::kBrushless), 
   left_b(Ports::LEFT_BACK, CANSparkMax::MotorType::kBrushless), 
   right_f(Ports::RIGHT_FRONT, CANSparkMax::MotorType::kBrushless), 
   right_b(Ports::RIGHT_BACK, CANSparkMax::MotorType::kBrushless),
+  shooter(Ports::SHOOTER, CANSparkMax::MotorType::kBrushless),
   low_feed(Ports::LOW_FEED),
-  top_feed(Ports::TOP_FEED) {}
+  top_feed(Ports::TOP_FEED) ,
+  lift(Ports::LIFT),
+  intake(Ports::INTAKE) {}
 
   void RobotInit() override;
   void RobotPeriodic() override;

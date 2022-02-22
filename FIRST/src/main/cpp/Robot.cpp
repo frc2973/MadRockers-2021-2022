@@ -12,6 +12,18 @@ void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+
+  SmartDashboard::PutNumber("Set Point", 0);
+
+  //Defaults
+  double kP = 6e-5, kI = 1e-6, kD = 0, kIz = 0, kFF = 0.000015, kMaxOutput = 1.0, kMinOutput = -1.0;
+  frc::SmartDashboard::PutNumber("P Gain", kP);
+  frc::SmartDashboard::PutNumber("I Gain", kI);
+  frc::SmartDashboard::PutNumber("D Gain", kD);
+  frc::SmartDashboard::PutNumber("I Zone", kIz);
+  frc::SmartDashboard::PutNumber("Feed Forward", kFF);
+  frc::SmartDashboard::PutNumber("Max Output", kMaxOutput);
+  frc::SmartDashboard::PutNumber("Min Output", kMinOutput);
 }
 
 /**
@@ -56,19 +68,44 @@ void Robot::AutonomousPeriodic() {
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+  kP = frc::SmartDashboard::GetNumber("P Gain", 0);
+  kI = frc::SmartDashboard::GetNumber("I Gain", 0);
+  kD = frc::SmartDashboard::GetNumber("D Gain", 0);
+  kIz = frc::SmartDashboard::GetNumber("I Zone", 0);
+  kFF = frc::SmartDashboard::GetNumber("Feed Forward", 0);
+  kMaxOutput = frc::SmartDashboard::GetNumber("Max Output", 0);
+  kMinOutput = frc::SmartDashboard::GetNumber("Min Output", 0);
+  shooter_pid.SetP(kP);
+  shooter_pid.SetI(kI);
+  shooter_pid.SetD(kD);
+  shooter_pid.SetIZone(kIz);
+  shooter_pid.SetFF(kFF);
+  shooter_pid.SetOutputRange(kMinOutput, kMaxOutput);
+}
 
 void Robot::TeleopPeriodic() {
   float mult = 0.4;
-  left_f.Set(-xbox.GetLeftY() * mult);
-  left_b.Set(-xbox.GetLeftY() * mult);
-  right_f.Set(xbox.GetRightY() * mult);
-  right_b.Set(xbox.GetRightY() * mult);
-  low_feed.Set(xbox.GetLeftBumper() * -0.25);
-  top_feed.Set(xbox.GetRightBumper() * -0.6);
+  /*left_f.Set(-xbox1.GetLeftY() * mult);
+  left_b.Set(-xbox1.GetLeftY() * mult);
+  right_f.Set(xbox1.GetRightY() * mult);
+  right_b.Set(xbox1.GetRightY() * mult);*/
+
+  low_feed.Set(xbox1.GetLeftBumper() * -0.25);
+  top_feed.Set(xbox1.GetRightBumper() * -1);
+  lift.Set(xbox1.GetLeftY());
+
+  int MaxRPM = 5700;
+  float set_point = SmartDashboard::GetNumber("Set Point", 0);
+  shooter_pid.SetReference(set_point * MaxRPM, ControlType::kVelocity);
+
+  SmartDashboard::PutNumber("Velocity", shooter_en.GetVelocity());
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  SmartDashboard::PutNumber("Velocity", 0);
+}
 
 void Robot::DisabledPeriodic() {}
 
