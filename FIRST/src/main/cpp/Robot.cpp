@@ -17,13 +17,13 @@ void Robot::RobotInit() {
 
   //Defaults
   double kP = 6e-5, kI = 1e-6, kD = 0, kIz = 0, kFF = 0.000015, kMaxOutput = 1.0, kMinOutput = -1.0;
-  frc::SmartDashboard::PutNumber("P Gain", kP);
-  frc::SmartDashboard::PutNumber("I Gain", kI);
-  frc::SmartDashboard::PutNumber("D Gain", kD);
-  frc::SmartDashboard::PutNumber("I Zone", kIz);
-  frc::SmartDashboard::PutNumber("Feed Forward", kFF);
-  frc::SmartDashboard::PutNumber("Max Output", kMaxOutput);
-  frc::SmartDashboard::PutNumber("Min Output", kMinOutput);
+  SmartDashboard::PutNumber("P Gain", kP);
+  SmartDashboard::PutNumber("I Gain", kI);
+  SmartDashboard::PutNumber("D Gain", kD);
+  SmartDashboard::PutNumber("I Zone", kIz);
+  SmartDashboard::PutNumber("Feed Forward", kFF);
+  SmartDashboard::PutNumber("Max Output", kMaxOutput);
+  SmartDashboard::PutNumber("Min Output", kMinOutput);
 }
 
 /**
@@ -34,7 +34,9 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+  SmartDashboard::PutNumber("Velocity", shooter_en.GetVelocity());
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -70,13 +72,13 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
   double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-  kP = frc::SmartDashboard::GetNumber("P Gain", 0);
-  kI = frc::SmartDashboard::GetNumber("I Gain", 0);
-  kD = frc::SmartDashboard::GetNumber("D Gain", 0);
-  kIz = frc::SmartDashboard::GetNumber("I Zone", 0);
-  kFF = frc::SmartDashboard::GetNumber("Feed Forward", 0);
-  kMaxOutput = frc::SmartDashboard::GetNumber("Max Output", 0);
-  kMinOutput = frc::SmartDashboard::GetNumber("Min Output", 0);
+  kP = SmartDashboard::GetNumber("P Gain", 0);
+  kI = SmartDashboard::GetNumber("I Gain", 0);
+  kD = SmartDashboard::GetNumber("D Gain", 0);
+  kIz = SmartDashboard::GetNumber("I Zone", 0);
+  kFF = SmartDashboard::GetNumber("Feed Forward", 0);
+  kMaxOutput = SmartDashboard::GetNumber("Max Output", 0);
+  kMinOutput = SmartDashboard::GetNumber("Min Output", 0);
   shooter_pid.SetP(kP);
   shooter_pid.SetI(kI);
   shooter_pid.SetD(kD);
@@ -99,13 +101,9 @@ void Robot::TeleopPeriodic() {
   int MaxRPM = 5700;
   float set_point = SmartDashboard::GetNumber("Set Point", 0);
   shooter_pid.SetReference(set_point * MaxRPM, ControlType::kVelocity);
-
-  SmartDashboard::PutNumber("Velocity", shooter_en.GetVelocity());
 }
 
-void Robot::DisabledInit() {
-  SmartDashboard::PutNumber("Velocity", 0);
-}
+void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
