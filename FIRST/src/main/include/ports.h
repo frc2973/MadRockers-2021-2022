@@ -62,13 +62,15 @@ namespace Ports {
         CAN_9 = 9
     };
 
-    const USB XBOX_1 = USB::USB_0;
+    const USB XBOX1 = USB::USB_0;
 
     const CAN LEFT_FRONT = CAN::CAN_1;
     const CAN LEFT_BACK = CAN::CAN_2;
     const CAN RIGHT_FRONT = CAN::CAN_3;
     const CAN RIGHT_BACK = CAN::CAN_4;
     const CAN SHOOTER = CAN::CAN_7;
+    const CAN CLIMB1 = CAN::CAN_8;
+    const CAN CLIMB2 = CAN::CAN_9;
 
     const PWM LOW_FEED = PWM::PWM_0;
     const PWM TOP_FEED = PWM::PWM_1;
