@@ -11,7 +11,7 @@ namespace Ports {
         DIO_6 = 6,
         DIO_7 = 7,
         DIO_8 = 8,
-        DIO_9 = 9,
+        DIO_9 = 9
     };
 
     // Robot PWM ports
@@ -26,7 +26,7 @@ namespace Ports {
         PWM_6 = 6,
         PWM_7 = 7,
         PWM_8 = 8,
-        PWM_9 = 9,
+        PWM_9 = 9
     };
 
     // Robot analog ports
