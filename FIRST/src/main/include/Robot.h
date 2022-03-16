@@ -9,13 +9,13 @@
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/motorcontrol/VictorSP.h>
+#include <frc/Timer.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/SparkMaxRelativeEncoder.h>
 
 #include "CustomController.h"
-#include "ports.h"
-#include "Limelight.h"
+#include "Ports.h"
 
 using namespace std;
 using namespace frc;
@@ -23,15 +23,17 @@ using namespace rev;
 
 class Robot : public frc::TimedRobot {
  public:
+  //Motors and Encoders
   CustomController xbox1;
   CANSparkMax left_f;
   CANSparkMax left_b;
   CANSparkMax right_f;
   CANSparkMax right_b;
+  SparkMaxRelativeEncoder left_en = left_f.GetEncoder();
+  SparkMaxRelativeEncoder right_en = right_f.GetEncoder();
   CANSparkMax shooter;
   /*CANSparkMax climb1;
   CANSparkMax climb2;
-  float c1_ref, c2_ref;
   SparkMaxRelativeEncoder climb1_en = climb1.GetEncoder();
   SparkMaxRelativeEncoder climb2_en = climb2.GetEncoder();*/
   SparkMaxRelativeEncoder shooter_en = shooter.GetEncoder();
@@ -40,6 +42,14 @@ class Robot : public frc::TimedRobot {
   VictorSP top_feed;
   VictorSP lift;
   VictorSP intake;
+
+  //Custom trackers
+  int MaxRPM;
+  bool shooting;
+  bool driven;
+  float l_start;
+  float r_start;
+  Timer timer;
 
   Robot() : 
   xbox1(Ports::XBOX1), 
@@ -53,7 +63,9 @@ class Robot : public frc::TimedRobot {
   low_feed(Ports::LOW_FEED),
   top_feed(Ports::TOP_FEED),
   lift(Ports::LIFT),
-  intake(Ports::INTAKE) {}
+  intake(Ports::INTAKE) {
+    MaxRPM = 5700;
+  }
 
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -66,9 +78,12 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
- private:
-  /*frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
-  std::string m_autoSelected;*/
+  //Custom Functions
+  void start_shooter(float);
+  void start_pid();
+  void stop_shooter();
+  
+  double limelight_get(std::string, double);
+  void limelight_set(std::string, double);
+  void line_up(float);
 };

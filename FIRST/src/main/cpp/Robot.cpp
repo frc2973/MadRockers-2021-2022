@@ -9,20 +9,20 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 void Robot::RobotInit() {
-  /*m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);*/
-
   SmartDashboard::PutNumber("Set Point", 0);
+  SmartDashboard::PutNumber("Wheel Left", 0);
+  SmartDashboard::PutNumber("Wheel Right", 0);
+  
+  shooter_pid.SetP(0); //Initialize PID
+  shooter_pid.SetI(0);
+  shooter_pid.SetD(0);
+  shooter_pid.SetFF(0.00018);
+  shooter_pid.SetIZone(0);
+  shooter_pid.SetOutputRange(-1.0, 1.0);
+  stop_shooter();
 
-  double kP = 0.00025, kI = 0.000001, kD = 0, kIz = 0, kFF = 0.00018, kMaxOutput = 1.0, kMinOutput = -1.0;
-  SmartDashboard::PutNumber("P Gain", kP);
-  SmartDashboard::PutNumber("I Gain", kI);
-  SmartDashboard::PutNumber("D Gain", kD);
-  SmartDashboard::PutNumber("I Zone", kIz);
-  SmartDashboard::PutNumber("Feed Forward", kFF);
-  SmartDashboard::PutNumber("Max Output", kMaxOutput);
-  SmartDashboard::PutNumber("Min Output", kMinOutput);
+  shooting = false; //Initialize trackers
+  driven = false;
 }
 
 /**
@@ -50,121 +50,109 @@ void Robot::RobotPeriodic() {
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
-  /*m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = frc::SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
-  fmt::print("Auto selected: {}\n", m_autoSelected);
+  float set_point = 0.47; //Initialize set point
 
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }*/
+  l_start = left_en.GetPosition(); //Set trackers
+  r_start = right_en.GetPosition();
+  driven = false;
+
+  start_shooter(set_point); //Initialize wheels
+  intake.Set(0);
+  low_feed.Set(0);
+  top_feed.Set(0);
+
+  timer.Reset(); //Start timer
+  timer.Start();
 }
 
 void Robot::AutonomousPeriodic() {
-  /*if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }*/
+  float distance = 30; //Initialize auto values
+  float speed = 0.2;
+  float set_point = 0.47;
+  
+  //Start shooter PID
+  if(shooter_en.GetVelocity() > 0.95 * set_point * MaxRPM) {
+    start_pid();
+  }
+
+  if(!timer.HasElapsed(1.25_s) && !driven) { //Start by lowering the intake
+    lift.Set(0.3);
+  }
+  else if(!driven) { //Start the intake wheels and reset the timer
+    lift.Set(0);
+    intake.Set(1);
+    timer.Stop();
+    timer.Reset();
+    driven = true;
+  }
+
+  //Once the timer is reset, go forwards
+  if(abs(left_en.GetPosition() - l_start) < distance && driven) {
+    left_f.Set(speed);
+    left_b.Set(speed);
+  }
+  else {
+    left_f.Set(0);
+    left_b.Set(0);
+  }
+  if(abs(right_en.GetPosition() - r_start) < distance && driven) {
+    right_f.Set(-speed * 1.1);
+    right_b.Set(-speed * 1.1);
+  }
+  else {
+    right_f.Set(0);
+    right_b.Set(0);
+  }
+  SmartDashboard::PutNumber("Wheel Left", left_en.GetPosition() - l_start);
+  SmartDashboard::PutNumber("Wheel Right", right_en.GetPosition() - r_start);
+  
+  //After driving, shoot the first ball and start the timer
+  if(abs(left_en.GetPosition() - l_start) > distance && 
+  abs(right_en.GetPosition() - r_start) > distance && 
+  timer.Get() == 0_s) {
+    line_up(set_point);
+    top_feed.Set(-0.8);
+    timer.Start();
+  }
+  //Shoot the second ball
+  if(timer.HasElapsed(2_s) && driven) {
+    line_up(set_point);
+    low_feed.Set(-0.5);
+  }
 }
 
 void Robot::TeleopInit() {
-  double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-  kP = SmartDashboard::GetNumber("P Gain", 0);
-  kI = SmartDashboard::GetNumber("I Gain", 0);
-  kD = SmartDashboard::GetNumber("D Gain", 0);
-  kIz = SmartDashboard::GetNumber("I Zone", 0);
-  kFF = SmartDashboard::GetNumber("Feed Forward", 0);
-  kMaxOutput = SmartDashboard::GetNumber("Max Output", 0);
-  kMinOutput = SmartDashboard::GetNumber("Min Output", 0);
-  shooter_pid.SetP(kP);
-  shooter_pid.SetI(kI);
-  shooter_pid.SetD(kD);
-  shooter_pid.SetIZone(kIz);
-  shooter_pid.SetFF(kFF);
-  shooter_pid.SetOutputRange(kMinOutput, kMaxOutput);
-
-  shooter_pid.SetReference(0, ControlType::kVelocity);
-  shooter.Set(0);
-
-  /*c1_ref = climb1_en.GetPosition();
-  c2_ref = climb2_en.GetPosition();*/
+  stop_shooter();
+  shooting = false;
 }
 
 void Robot::TeleopPeriodic() {
-  float mult = 0.4;
-  left_f.Set(-xbox1.GetLeftY() * mult);
+  float mult = 0.4; //Reduce speed
+  left_f.Set(-xbox1.GetLeftY() * mult); //Drivetrain
   left_b.Set(-xbox1.GetLeftY() * mult);
   right_f.Set(xbox1.GetRightY() * mult);
   right_b.Set(xbox1.GetRightY() * mult);
 
-  low_feed.Set(xbox1.GetLeftBumper() * -0.5);
+  low_feed.Set(xbox1.GetLeftBumper() * -0.5); //Shooter system
   top_feed.Set(xbox1.GetRightBumper() * -0.8);
-  intake.Set(xbox1.GetAButton());
-  lift.Set(xbox1.GetLeftY());
+  intake.Set(int(xbox1.GetRightTriggerAxis()));
+  lift.Set(xbox1.GetXButton() * 0.3 - xbox1.GetBButton() * 0.5);
 
-  int MaxRPM = 5700;
   float set_point = SmartDashboard::GetNumber("Set Point", 0);
   if(xbox1.GetAButton()) {
-    shooter_pid.SetReference(set_point * MaxRPM, ControlType::kVelocity);
+    start_shooter(set_point);
+    shooting = true;
   }
-  if(xbox1.GetBButton()) {
-    shooter_pid.SetReference(0, ControlType::kVelocity);
-    //while(shooter_en.GetVelocity() > 10) {}
-    shooter.Set(0);
+  if(shooter_en.GetVelocity() > 0.95 * set_point * MaxRPM && shooting) {
+    start_pid();
+  }
+  if(xbox1.GetYButton()) {
+    stop_shooter();
+    shooting = false;
   }
 
-  /*float c1_en = climb1_en.GetPosition() - c1_ref;
-  float c2_en = climb2_en.GetPosition() - c2_ref;
-  SmartDashboard::PutNumber("C1 Pos", c1_en);
-  SmartDashboard::PutNumber("C2 Pos", c2_en);
-  float speed = xbox1.GetLeftY();
-  climb1.Set(speed * mult);
-  climb2.Set(speed * mult * 0.85);
-  if(abs(speed) > 0.1) {
-    if(c1_en - c2_en > 1) {
-      while(c1_en - c2_en > 0.1) {
-        //climb1.Set(speed * mult * 0.9);
-        climb2.Set(speed * mult * 0.85);
-      }
-    }
-    if(c2_en - c1_en > 1) {
-      while(c2_en - c1_en > 0.1) {
-        climb1.Set(speed * mult);
-        //climb2.Set(speed * mult * 0.75);
-      }
-    }
-  }*/
-
-  /*float range = 0.5;
-  float speed = 0.1;
-
-  if(xbox1.GetAButton()) {
-    limelight_set("ledMode", 3); //LED on
-    while(xbox1.GetAButton()) {}
-    if(limelight_get("tv")) { //has target
-      while(abs(limelight_get("tx")) > range) {
-        if(limelight_get("tx") > 0) {
-          //left_f.Set(speed);
-          //left_b.Set(speed);
-          right_f.Set(speed);
-          right_b.Set(speed);
-        }
-        else {
-          left_f.Set(-speed);
-          left_b.Set(-speed);
-          //right_f.Set(-speed);
-          //right_b.Set(-speed);
-        }
-      }
-      left_f.Set(0);
-      left_b.Set(0);
-      right_f.Set(0);
-      right_b.Set(0);
-    }
-    limelight_set("ledMode", 1); //LED off
+  /*if(xbox1.GetAButton()) {
+    line_up();
   }
 
   if(xbox1.GetBButton()) {
