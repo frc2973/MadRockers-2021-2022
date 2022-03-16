@@ -7,7 +7,6 @@
 #include <string>
 
 #include <frc/TimedRobot.h>
-#include <frc/smartdashboard/SendableChooser.h>
 #include <frc/motorcontrol/VictorSP.h>
 #include <frc/Timer.h>
 #include <rev/CANSparkMax.h>
