@@ -31,9 +31,9 @@ class Robot : public frc::TimedRobot {
   SparkMaxRelativeEncoder left_en = left_f.GetEncoder();
   SparkMaxRelativeEncoder right_en = right_f.GetEncoder();
   CANSparkMax shooter;
-  /*CANSparkMax climb1;
+  CANSparkMax climb1;
   CANSparkMax climb2;
-  SparkMaxRelativeEncoder climb1_en = climb1.GetEncoder();
+  /*SparkMaxRelativeEncoder climb1_en = climb1.GetEncoder();
   SparkMaxRelativeEncoder climb2_en = climb2.GetEncoder();*/
   SparkMaxRelativeEncoder shooter_en = shooter.GetEncoder();
   SparkMaxPIDController shooter_pid = shooter.GetPIDController();
@@ -57,8 +57,8 @@ class Robot : public frc::TimedRobot {
   right_f(Ports::RIGHT_FRONT, CANSparkMax::MotorType::kBrushless), 
   right_b(Ports::RIGHT_BACK, CANSparkMax::MotorType::kBrushless),
   shooter(Ports::SHOOTER, CANSparkMax::MotorType::kBrushless),
-  //climb1(Ports::CLIMB1, CANSparkMax::MotorType::kBrushless),
-  //climb2(Ports::CLIMB2, CANSparkMax::MotorType::kBrushless),
+  climb1(Ports::CLIMB1, CANSparkMax::MotorType::kBrushless),
+  climb2(Ports::CLIMB2, CANSparkMax::MotorType::kBrushless),
   low_feed(Ports::LOW_FEED),
   top_feed(Ports::TOP_FEED),
   lift(Ports::LIFT),
