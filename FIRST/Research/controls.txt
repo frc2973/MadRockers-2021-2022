@@ -1,0 +1,32 @@
+Dalton:
+shoot - b
+intake up/down - dpad up/down
+intake drive - dpad left
+intake reverse - dpad right
+shot increase - y
+shot decrease - a
+cancel shooter - left bumper
+feeder 1 - left trigger
+feeder 2 - right trigger
+flywheel - right bumper
+
+Cyrus:
+shoot - a
+intake up/down - dpad up/down
+intake drive - dpad left
+intake reverse - dpad right
+shot increase - start
+shot decrease - back
+cancel shooter - right bumper
+feeder 1 - right trigger
+feeder 2 - left trigger
+flywheel - left bumper
+
+Colby:
+left drive - left stick up/down
+right drive - right stick up/down
+left decrease - left bumper
+right decrease - right bumper
+climber up - y
+climber down - a
+reverse controls - x
