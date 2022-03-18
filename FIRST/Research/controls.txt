@@ -15,8 +15,8 @@ shoot - a
 intake up/down - dpad up/down
 intake drive - dpad left
 intake reverse - dpad right
-shot increase - start
-shot decrease - back
+shot increase - b
+shot decrease - x
 cancel shooter - right bumper
 feeder 1 - right trigger
 feeder 2 - left trigger
