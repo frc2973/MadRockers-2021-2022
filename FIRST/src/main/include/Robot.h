@@ -23,7 +23,8 @@ using namespace rev;
 class Robot : public frc::TimedRobot {
  public:
   //Motors and Encoders
-  CustomController xbox1;
+  CustomController xbox_driver;
+  CustomController xbox_operator;
   CANSparkMax left_f;
   CANSparkMax left_b;
   CANSparkMax right_f;
@@ -51,7 +52,8 @@ class Robot : public frc::TimedRobot {
   Timer timer;
 
   Robot() : 
-  xbox1(Ports::XBOX1), 
+  xbox_driver(Ports::XBOX_DRIVER),
+  xbox_operator(Ports::XBOX_OPERATOR),
   left_f(Ports::LEFT_FRONT, CANSparkMax::MotorType::kBrushless), 
   left_b(Ports::LEFT_BACK, CANSparkMax::MotorType::kBrushless), 
   right_f(Ports::RIGHT_FRONT, CANSparkMax::MotorType::kBrushless), 
@@ -64,6 +66,8 @@ class Robot : public frc::TimedRobot {
   lift(Ports::LIFT),
   intake(Ports::INTAKE) {
     MaxRPM = 5700;
+    shooting = false;
+    driven = false;
   }
 
   void RobotInit() override;
