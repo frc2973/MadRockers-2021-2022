@@ -15,6 +15,6 @@ left drive - left stick up/down
 right drive - right stick up/down
 left decrease - left bumper
 right decrease - right bumper
-climber up - y
-climber down - a
+climber up - right trigger
+climber down - left trigger
 reverse controls - x
