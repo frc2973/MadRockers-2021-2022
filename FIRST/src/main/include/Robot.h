@@ -45,6 +45,7 @@ class Robot : public frc::TimedRobot {
 
   //Custom trackers
   int MaxRPM;
+  bool reversed;
   bool shooting;
   bool driven;
   float l_start;
@@ -66,8 +67,6 @@ class Robot : public frc::TimedRobot {
   lift(Ports::LIFT),
   intake(Ports::INTAKE) {
     MaxRPM = 5700;
-    shooting = false;
-    driven = false;
   }
 
   void RobotInit() override;

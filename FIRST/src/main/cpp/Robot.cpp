@@ -117,15 +117,29 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
   stop_shooter();
+  reversed = false;
   shooting = false;
 }
 
 void Robot::TeleopPeriodic() {
+  //Drivetrain
   float mult = 0.4; //Reduce speed
-  left_f.Set(-xbox_driver.GetLeftY() * mult); //Drivetrain
-  left_b.Set(-xbox_driver.GetLeftY() * mult);
-  right_f.Set(xbox_driver.GetRightY() * mult);
-  right_b.Set(xbox_driver.GetRightY() * mult);
+  if(reversed) {
+    left_f.Set(-xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
+    left_b.Set(-xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
+    right_f.Set(xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
+    right_b.Set(xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
+  }
+  else {
+    left_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
+    left_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
+    right_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
+    right_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
+  }
+  if(xbox_driver.GetXButton()) {
+    while(xbox_driver.GetXButton()) {}
+    reversed = !reversed;
+  }
 
   low_feed.Set(int(xbox_operator.GetPOV() == 90) - int(xbox_operator.GetRightTriggerAxis()) );//* 0.5); //Shooter system
   top_feed.Set(-int(xbox_operator.GetLeftTriggerAxis()) );//* -0.8);
