@@ -1,3 +1,4 @@
 Climb2:
-bottom - 19.04755973815918
-top - -222.48683166503906
+bottom - 105
+under rung - 40
+top - -116
