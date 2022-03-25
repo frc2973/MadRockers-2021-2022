@@ -34,8 +34,7 @@ class Robot : public frc::TimedRobot {
   CANSparkMax shooter;
   CANSparkMax climb1;
   CANSparkMax climb2;
-  SparkMaxRelativeEncoder climb1_en = climb1.GetEncoder();
-  SparkMaxRelativeEncoder climb2_en = climb2.GetEncoder();
+  SparkMaxRelativeEncoder climb_en = climb1.GetEncoder();
   SparkMaxRelativeEncoder shooter_en = shooter.GetEncoder();
   SparkMaxPIDController shooter_pid = shooter.GetPIDController();
   VictorSP low_feed;
