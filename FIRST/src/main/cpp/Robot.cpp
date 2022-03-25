@@ -141,10 +141,10 @@ void Robot::TeleopPeriodic() {
     reversed = !reversed;
   }
 
-  low_feed.Set(int(xbox_operator.GetPOV() == 90) - int(xbox_operator.GetRightTriggerAxis()) );//* 0.5); //Shooter system
-  top_feed.Set(-int(xbox_operator.GetLeftTriggerAxis()) );//* -0.8);
+  low_feed.Set(int(xbox_operator.GetPOV() == 90) - int(xbox_operator.GetRightTriggerAxis()));// * 0.5); //Shooter system
+  top_feed.Set(-int(xbox_operator.GetLeftTriggerAxis()) * int(timer.HasElapsed(1_s) || timer.Get() == 0_s));// * 0.8);
   intake.Set(int(xbox_operator.GetPOV() == 270) - int(xbox_operator.GetPOV() == 90));
-  lift.Set(int(xbox_operator.GetPOV() == 180) * 0.5 - int(xbox_operator.GetPOV() == 0) * 0.3);
+  lift.Set(int(xbox_operator.GetPOV() == 180) * 0.3 - int(xbox_operator.GetPOV() == 0) * 0.5);
 
   float set_point = SmartDashboard::GetNumber("Set Point", 0); //Shooting
   if(xbox_operator.GetLeftBumper()) {
@@ -168,31 +168,24 @@ void Robot::TeleopPeriodic() {
     SmartDashboard::PutNumber("Offset", SmartDashboard::GetNumber("Offset", 0) - 0.01);
   }
 
-  climb1.Set(xbox_driver.GetLeftTriggerAxis() - xbox_driver.GetRightTriggerAxis());
-  climb2.Set(xbox_driver.GetLeftTriggerAxis() - xbox_driver.GetRightTriggerAxis());
-  xbox_driver.SetRumble(GenericHID::RumbleType::kLeftRumble, 0);
-  SmartDashboard::PutNumber("Climb1", climb1_en.GetPosition());
-  SmartDashboard::PutNumber("Climb2", climb2_en.GetPosition());
-  /*if(climb2_en.GetPosition() > 19 && xbox_driver.GetLeftTriggerAxis() > 0) {
-    climb1.Set(0);
-    climb2.Set(0);
-    xbox_driver.SetRumble(GenericHID::RumbleType::kLeftRumble, 0.1);
-  }
-  if(climb2_en.GetPosition() < -222 && xbox_driver.GetRightTriggerAxis() > 0) {
-    climb1.Set(0);
-    climb2.Set(0);
-    xbox_driver.SetRumble(GenericHID::RumbleType::kLeftRumble, 0.1);
-  }*/
+  climb1.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis());
+  climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis());
+  SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
 
   /*if(xbox_driver.GetAButton()) {
+    start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
     line_up();
+    top_feed.Set(-1);//0.8);
+    timer.Stop();
+    timer.Reset();
+    timer.Start();
   }
 
-  if(xbox_driver.GetBButton()) {
+  if(xbox_driver.GetStartButton()) {
     limelight_set("ledMode", 3);
   }
 
-  if(xbox_driver.GetXButton()) {
+  if(xbox_driver.GetBackButton()) {
     limelight_set("ledMode", 1);
   }*/
 }
