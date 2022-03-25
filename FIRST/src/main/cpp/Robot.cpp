@@ -172,20 +172,20 @@ void Robot::TeleopPeriodic() {
   climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis());
   SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
 
-  /*if(xbox_driver.GetAButton()) {
+  /*if(xbox_operator.GetAButton()) {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
-    line_up();
+    line_up(set_point + SmartDashboard::GetNumber("Offset", 0));
     top_feed.Set(-1);//0.8);
     timer.Stop();
     timer.Reset();
     timer.Start();
   }
 
-  if(xbox_driver.GetStartButton()) {
+  if(xbox_operator.GetStartButton()) {
     limelight_set("ledMode", 3);
   }
 
-  if(xbox_driver.GetBackButton()) {
+  if(xbox_operator.GetBackButton()) {
     limelight_set("ledMode", 1);
   }*/
 }
