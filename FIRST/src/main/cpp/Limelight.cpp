@@ -39,23 +39,21 @@ void Robot::line_up(float set_point) {
   float range = 0.5;
   float speed = 0.1;
   limelight_set("ledMode", 3); //LED on
-  timer.Stop();
-  timer.Reset();
-  timer.Start();
-  while(!timer.HasElapsed(0.5_s)) {}
+  while(shooter_en.GetVelocity() < 0.95 * set_point * MaxRPM) {}
+  start_pid();
   if(limelight_get("tv")) { //has target
     while(abs(limelight_get("tx")) > range) {
       if(limelight_get("tx") > 0) {
+        left_f.Set(speed);
+        left_b.Set(speed);
         right_f.Set(speed);
         right_b.Set(speed);
       }
       else {
         left_f.Set(-speed);
         left_b.Set(-speed);
-      }
-
-      if(shooter_en.GetVelocity() > 0.95 * set_point * MaxRPM) {
-        start_pid();
+        right_f.Set(-speed);
+        right_b.Set(-speed);
       }
     }
     left_f.Set(0);
