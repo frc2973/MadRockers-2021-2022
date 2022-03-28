@@ -30,8 +30,8 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
-  SmartDashboard::PutNumber("Velocity 1", shooter_en.GetVelocity());
-  SmartDashboard::PutNumber("Velocity 2", shooter_en.GetVelocity());
+  SmartDashboard::PutNumber("RPM Graph", shooter_en.GetVelocity());
+  SmartDashboard::PutNumber("RPM", shooter_en.GetVelocity());
 }
 
 /**
@@ -119,22 +119,24 @@ void Robot::TeleopInit() {
   stop_shooter();
   reversed = false;
   shooting = false;
+  timer.Stop();
+  timer.Reset();
 }
 
 void Robot::TeleopPeriodic() {
   //Drivetrain
   float mult = 0.4; //Reduce speed
   if(reversed) {
-    left_f.Set(-xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
-    left_b.Set(-xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
-    right_f.Set(xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
-    right_b.Set(xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
+    left_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
+    left_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
+    right_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
+    right_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
   }
   else {
-    left_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
-    left_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2));
-    right_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
-    right_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2));
+    left_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
+    left_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
+    right_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
+    right_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
   }
   if(xbox_driver.GetXButton()) {
     while(xbox_driver.GetXButton()) {}
@@ -142,11 +144,12 @@ void Robot::TeleopPeriodic() {
   }
 
   low_feed.Set(int(xbox_operator.GetPOV() == 90) - int(xbox_operator.GetRightTriggerAxis()));// * 0.5); //Shooter system
-  top_feed.Set(-int(xbox_operator.GetLeftTriggerAxis()) * int(timer.HasElapsed(1_s) || timer.Get() == 0_s));// * 0.8);
+  top_feed.Set(-int(xbox_operator.GetLeftTriggerAxis()) - int(!timer.HasElapsed(1_s) && timer.Get() != 0_s));// * 0.8);
   intake.Set(int(xbox_operator.GetPOV() == 270) - int(xbox_operator.GetPOV() == 90));
   lift.Set(int(xbox_operator.GetPOV() == 180) * 0.3 - int(xbox_operator.GetPOV() == 0) * 0.5);
 
-  float set_point = SmartDashboard::GetNumber("Set Point", 0); //Shooting
+  float set_point = 0.47;//SmartDashboard::GetNumber("Set Point", 0); //Shooting
+  SmartDashboard::PutNumber("Expected RPM", (set_point + SmartDashboard::GetNumber("Offset", 0)) * MaxRPM);
   if(xbox_operator.GetLeftBumper()) {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
     shooting = true;
@@ -157,6 +160,11 @@ void Robot::TeleopPeriodic() {
   if(xbox_operator.GetRightBumper()) {
     stop_shooter();
     shooting = false;
+  }
+  if(xbox_driver.GetBButton()) {
+    start_shooter(0.3);
+    start_pid();
+    shooting = true;
   }
 
   if(xbox_operator.GetBButton()) { //Shooter offset
@@ -172,7 +180,7 @@ void Robot::TeleopPeriodic() {
   climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis());
   SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
 
-  /*if(xbox_operator.GetAButton()) {
+  if(xbox_operator.GetAButton()) {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
     line_up(set_point + SmartDashboard::GetNumber("Offset", 0));
     top_feed.Set(-1);//0.8);
@@ -187,7 +195,7 @@ void Robot::TeleopPeriodic() {
 
   if(xbox_operator.GetBackButton()) {
     limelight_set("ledMode", 1);
-  }*/
+  }
 }
 
 void Robot::DisabledInit() {}
