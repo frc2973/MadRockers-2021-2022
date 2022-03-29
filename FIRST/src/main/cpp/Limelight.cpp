@@ -38,11 +38,24 @@ void Robot::limelight_set(std::string variable, double value) {
 void Robot::line_up(float set_point) {
   float range = 0.5;
   float speed = 0.1;
+  left_f.Set(0);
+  left_b.Set(0);
+  right_f.Set(0);
+  right_b.Set(0);
+  low_feed.Set(0);
+  intake.Set(0);
+  lift.Set(0);
+  climb1.Set(0);
+  climb2.Set(0);
   limelight_set("ledMode", 3); //LED on
-  while(shooter_en.GetVelocity() < 0.95 * set_point * MaxRPM) {}
+  timer.Stop();
+  timer.Reset();
+  timer.Start();
+  while(!timer.HasElapsed(0.5_s) && !xbox_operator.GetBackButton()) {}
+  while(shooter_en.GetVelocity() < 0.95 * set_point * MaxRPM && !xbox_operator.GetBackButton()) {}
   start_pid();
   if(limelight_get("tv")) { //has target
-    while(abs(limelight_get("tx")) > range) {
+    while(abs(limelight_get("tx")) > range && !xbox_operator.GetBackButton()) {
       if(limelight_get("tx") > 0) {
         left_f.Set(speed);
         left_b.Set(speed);
