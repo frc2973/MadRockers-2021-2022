@@ -52,7 +52,7 @@ void Robot::line_up(float set_point) {
   timer.Reset();
   timer.Start();
   while(!timer.HasElapsed(0.5_s) && !xbox_operator.GetBackButton()) {}
-  while(shooter_en.GetVelocity() < 0.95 * set_point * MaxRPM && !xbox_operator.GetBackButton()) {}
+  while(shooter_en.GetVelocity() < 0.85 * set_point * MaxRPM && !xbox_operator.GetBackButton()) {}
   start_pid();
   if(limelight_get("tv")) { //has target
     while(abs(limelight_get("tx")) > range && !xbox_operator.GetBackButton()) {
