@@ -9,8 +9,10 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 void Robot::RobotInit() {
-  SmartDashboard::PutNumber("Set Point", 0);
   SmartDashboard::PutNumber("Offset", 0);
+  SmartDashboard::PutNumber("Expected RPM", 0);
+  SmartDashboard::PutNumber("RPM", 0);
+  SmartDashboard::PutNumber("RPM Graph", 0);
   
   shooter_pid.SetP(0); //Initialize PID
   shooter_pid.SetI(0);
@@ -57,7 +59,8 @@ void Robot::AutonomousInit() {
   low_feed.Set(0);
   top_feed.Set(0);
 
-  timer.Reset(); //Start timer
+  timer.Stop(); //Start timer
+  timer.Reset();
   timer.Start();
 }
 
@@ -105,13 +108,13 @@ void Robot::AutonomousPeriodic() {
   abs(right_en.GetPosition() - r_start) > distance && 
   timer.Get() == 0_s) {
     line_up(set_point);
-    top_feed.Set(-0.8);
+    top_feed.Set(-1);
     timer.Start();
   }
   //Shoot the second ball
   if(timer.HasElapsed(2_s) && driven) {
     line_up(set_point);
-    low_feed.Set(-0.5);
+    low_feed.Set(-0.85);
   }
 }
 
@@ -143,12 +146,14 @@ void Robot::TeleopPeriodic() {
     reversed = !reversed;
   }
 
-  low_feed.Set(int(xbox_operator.GetPOV() == 90) - int(xbox_operator.GetRightTriggerAxis()));// * 0.5); //Shooter system
-  top_feed.Set(-int(xbox_operator.GetLeftTriggerAxis()) - int(!timer.HasElapsed(1_s) && timer.Get() != 0_s));// * 0.8);
+  low_feed.Set(int(xbox_operator.GetPOV() == 90) - int(xbox_operator.GetRightTriggerAxis())); //Shooter system
+  top_feed.Set(int(xbox_operator.GetPOV() == 90) 
+  - int(xbox_operator.GetLeftTriggerAxis()) 
+  - int(!timer.HasElapsed(1_s) && timer.Get() != 0_s));
   intake.Set(int(xbox_operator.GetPOV() == 270) - int(xbox_operator.GetPOV() == 90));
   lift.Set(int(xbox_operator.GetPOV() == 180) * 0.3 - int(xbox_operator.GetPOV() == 0) * 0.5);
 
-  float set_point = 0.47;//SmartDashboard::GetNumber("Set Point", 0); //Shooting
+  float set_point = 0.47; //Shooting
   SmartDashboard::PutNumber("Expected RPM", (set_point + SmartDashboard::GetNumber("Offset", 0)) * MaxRPM);
   if(xbox_operator.GetLeftBumper()) {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
@@ -183,7 +188,7 @@ void Robot::TeleopPeriodic() {
   if(xbox_operator.GetAButton()) {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
     line_up(set_point + SmartDashboard::GetNumber("Offset", 0));
-    top_feed.Set(-1);//0.8);
+    top_feed.Set(-1);
     timer.Stop();
     timer.Reset();
     timer.Start();
