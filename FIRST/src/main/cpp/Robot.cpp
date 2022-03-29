@@ -48,11 +48,10 @@ void Robot::RobotPeriodic() {
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
-  float set_point = 0.47; //Initialize set point
-
   l_start = left_en.GetPosition(); //Set trackers
   r_start = right_en.GetPosition();
   driven = false;
+  shooting = true;
 
   start_shooter(set_point); //Initialize wheels
   intake.Set(0);
@@ -67,10 +66,9 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
   float distance = 30; //Initialize auto values
   float speed = 0.2;
-  float set_point = 0.47;
   
   //Start shooter PID
-  if(shooter_en.GetVelocity() > 0.95 * set_point * MaxRPM) {
+  if(shooter_en.GetVelocity() > 0.85 * set_point * MaxRPM) {
     start_pid();
   }
 
@@ -86,7 +84,9 @@ void Robot::AutonomousPeriodic() {
   }
 
   //Once the timer is reset, go forwards
-  if(abs(left_en.GetPosition() - l_start) < distance && driven) {
+  if(abs(left_en.GetPosition() - l_start) < distance 
+  && driven
+  && shooting) {
     left_f.Set(speed);
     left_b.Set(speed);
   }
@@ -94,7 +94,9 @@ void Robot::AutonomousPeriodic() {
     left_f.Set(0);
     left_b.Set(0);
   }
-  if(abs(right_en.GetPosition() - r_start) < distance && driven) {
+  if(abs(right_en.GetPosition() - r_start) < distance 
+  && driven
+  && shooting) {
     right_f.Set(-speed * 1.1);
     right_b.Set(-speed * 1.1);
   }
@@ -112,10 +114,40 @@ void Robot::AutonomousPeriodic() {
     timer.Start();
   }
   //Shoot the second ball
-  if(timer.HasElapsed(2_s) && driven) {
+  if(timer.HasElapsed(2_s) && driven && shooting) {
     line_up(set_point);
-    low_feed.Set(-0.85);
+    low_feed.Set(0.85);
+    top_feed.Set(-1);
+    intake.Set(1);
+    l_start = left_en.GetPosition();
+    r_start = right_en.GetPosition();
+    shooting = false;
   }
+
+  //After shooting, drive back some more
+  if(abs(left_en.GetPosition() - l_start) < 5 
+  && timer.HasElapsed(4_s)
+  && !shooting) {
+    left_f.Set(speed);
+    left_b.Set(speed);
+  }
+  else if(!shooting) {
+    left_f.Set(0);
+    left_b.Set(0);
+  }
+  if(abs(right_en.GetPosition() - r_start) < 5 
+  && timer.HasElapsed(4_s)
+  && !shooting) {
+    right_f.Set(-speed * 1.1);
+    right_b.Set(-speed * 1.1);
+  }
+  else if(!shooting) {
+    right_f.Set(0);
+    right_b.Set(0);
+  }
+
+  SmartDashboard::PutNumber("L Wheels", left_en.GetPosition() - l_start);
+  SmartDashboard::PutNumber("R Wheels", right_en.GetPosition() - r_start);
 }
 
 void Robot::TeleopInit() {
@@ -146,14 +178,14 @@ void Robot::TeleopPeriodic() {
     reversed = !reversed;
   }
 
-  low_feed.Set(int(xbox_operator.GetPOV() == 90) - int(xbox_operator.GetRightTriggerAxis())); //Shooter system
+  low_feed.Set(int(xbox_operator.GetRightTriggerAxis()) - int(xbox_operator.GetPOV() == 90)); //Shooter system
   top_feed.Set(int(xbox_operator.GetPOV() == 90) 
   - int(xbox_operator.GetLeftTriggerAxis()) 
   - int(!timer.HasElapsed(1_s) && timer.Get() != 0_s));
   intake.Set(int(xbox_operator.GetPOV() == 270) - int(xbox_operator.GetPOV() == 90));
   lift.Set(int(xbox_operator.GetPOV() == 180) * 0.3 - int(xbox_operator.GetPOV() == 0) * 0.5);
 
-  float set_point = 0.47; //Shooting
+  //Shooting
   SmartDashboard::PutNumber("Expected RPM", (set_point + SmartDashboard::GetNumber("Offset", 0)) * MaxRPM);
   if(xbox_operator.GetLeftBumper()) {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
