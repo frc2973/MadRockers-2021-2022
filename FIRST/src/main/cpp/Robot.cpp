@@ -11,8 +11,6 @@
 void Robot::RobotInit() {
   SmartDashboard::PutNumber("Offset", 0);
   SmartDashboard::PutNumber("Expected RPM", 0);
-  SmartDashboard::PutNumber("Actual RPM", 0);
-  SmartDashboard::PutNumber("RPM Graph", 0);
   SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
   
   shooter_pid.SetP(0); //Initialize PID
@@ -34,7 +32,7 @@ void Robot::RobotInit() {
  */
 void Robot::RobotPeriodic() {
   SmartDashboard::PutNumber("RPM Graph", shooter_en.GetVelocity());
-  SmartDashboard::PutNumber("RPM", shooter_en.GetVelocity());
+  SmartDashboard::PutNumber("Actual RPM", shooter_en.GetVelocity());
 }
 
 /**
