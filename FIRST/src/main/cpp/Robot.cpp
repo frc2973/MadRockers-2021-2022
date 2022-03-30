@@ -11,8 +11,9 @@
 void Robot::RobotInit() {
   SmartDashboard::PutNumber("Offset", 0);
   SmartDashboard::PutNumber("Expected RPM", 0);
-  SmartDashboard::PutNumber("RPM", 0);
+  SmartDashboard::PutNumber("Actual RPM", 0);
   SmartDashboard::PutNumber("RPM Graph", 0);
+  SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
   
   shooter_pid.SetP(0); //Initialize PID
   shooter_pid.SetI(0);
@@ -145,9 +146,6 @@ void Robot::AutonomousPeriodic() {
     right_f.Set(0);
     right_b.Set(0);
   }
-
-  SmartDashboard::PutNumber("L Wheels", left_en.GetPosition() - l_start);
-  SmartDashboard::PutNumber("R Wheels", right_en.GetPosition() - r_start);
 }
 
 void Robot::TeleopInit() {
@@ -191,7 +189,7 @@ void Robot::TeleopPeriodic() {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
     shooting = true;
   }
-  if(shooter_en.GetVelocity() > 0.95 * (set_point + SmartDashboard::GetNumber("Offset", 0)) * MaxRPM && shooting) {
+  if(shooter_en.GetVelocity() > 0.85 * set_point * MaxRPM && shooting) {
     start_pid();
   }
   if(xbox_operator.GetRightBumper()) {
@@ -219,7 +217,7 @@ void Robot::TeleopPeriodic() {
 
   if(xbox_operator.GetAButton()) {
     start_shooter(set_point + SmartDashboard::GetNumber("Offset", 0));
-    line_up(set_point + SmartDashboard::GetNumber("Offset", 0));
+    line_up(set_point);
     top_feed.Set(-1);
     timer.Stop();
     timer.Reset();
