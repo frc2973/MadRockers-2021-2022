@@ -67,7 +67,7 @@ class Robot : public frc::TimedRobot {
   lift(Ports::LIFT),
   intake(Ports::INTAKE) {
     MaxRPM = 5700;
-    set_point = 0.51;
+    set_point = 0.49;
   }
 
   void RobotInit() override;
