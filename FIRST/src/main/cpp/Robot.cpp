@@ -209,8 +209,10 @@ void Robot::TeleopPeriodic() {
     SmartDashboard::PutNumber("Offset", SmartDashboard::GetNumber("Offset", 0) - 0.01);
   }
 
-  climb1.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis());
-  climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis());
+  climb1.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
+  + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
+  climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
+  + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
   SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
 
   if(xbox_operator.GetAButton()) {
