@@ -157,7 +157,7 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
   //Drivetrain
   float mult = 0.4; //Reduce speed
-  if(reversed) {
+  if(!reversed) {
     left_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
     left_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
     right_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
@@ -179,7 +179,7 @@ void Robot::TeleopPeriodic() {
   - int(xbox_operator.GetLeftTriggerAxis()) 
   - int(!timer.HasElapsed(1_s) && timer.Get() != 0_s));
   intake.Set(int(xbox_operator.GetPOV() == 270) - int(xbox_operator.GetPOV() == 90));
-  lift.Set(int(xbox_operator.GetPOV() == 180) * 0.3 - int(xbox_operator.GetPOV() == 0) * 0.5);
+  lift.Set(int(xbox_operator.GetPOV() == 180) * 0.4 - int(xbox_operator.GetPOV() == 0) * 0.75);
 
   //Shooting
   SmartDashboard::PutNumber("Expected RPM", (set_point + SmartDashboard::GetNumber("Offset", 0)) * MaxRPM);
