@@ -157,17 +157,18 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
   //Drivetrain
   float mult = 0.4; //Reduce speed
+  float brake = 0.05; //Brake
   if(!reversed) {
-    left_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
-    left_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
-    right_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
-    right_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
+    left_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0) + brake);
+    left_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0) + brake);
+    right_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0) + brake);
+    right_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0) + brake);
   }
   else {
-    left_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
-    left_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0));
-    right_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
-    right_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0));
+    left_f.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0) + brake);
+    left_b.Set(-xbox_driver.GetLeftY() * mult * (1 - xbox_driver.GetLeftBumper() / 2.0) + brake);
+    right_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0) + brake);
+    right_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0) + brake);
   }
   if(xbox_driver.GetXButton()) {
     while(xbox_driver.GetXButton()) {}
