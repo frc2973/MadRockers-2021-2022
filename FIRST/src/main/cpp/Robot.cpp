@@ -11,7 +11,7 @@
 void Robot::RobotInit() {
   SmartDashboard::PutNumber("Offset", 0);
   SmartDashboard::PutNumber("Expected RPM", 0);
-  SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
+  //SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
   
   shooter_pid.SetP(0); //Initialize PID
   shooter_pid.SetI(0);
@@ -209,10 +209,48 @@ void Robot::TeleopPeriodic() {
     SmartDashboard::PutNumber("Offset", SmartDashboard::GetNumber("Offset", 0) - 0.01);
   }
 
-  climb1.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
-  + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
-  climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
-  + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
+  float limit_up = -115;
+  float limit_down = 100;
+  float range = 30;
+  //Normal range
+  if(climb_en.GetPosition() < limit_down - range && climb_en.GetPosition() > limit_up + range) {
+    climb1.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
+    + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
+    climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
+    + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
+  }
+  //Slow range
+  else if(climb_en.GetPosition() < limit_down && climb_en.GetPosition() > limit_up) {
+    climb1.Set((xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()) * 0.25);
+    climb2.Set((xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()) * 0.25);
+  }
+  //Stops
+  else {
+    if(climb_en.GetPosition() > 0) {
+      climb1.Set(-xbox_driver.GetLeftTriggerAxis());
+      climb2.Set(-xbox_driver.GetLeftTriggerAxis());
+    }
+    else if(climb_en.GetPosition() < 0) {
+      climb1.Set(xbox_driver.GetRightTriggerAxis());
+      climb2.Set(xbox_driver.GetRightTriggerAxis());
+    }
+  }
+  if(xbox_driver.GetPOV() == 0) {
+    climb1.Set(-0.1);
+    climb2.Set(-0.1);
+  }
+  if(xbox_driver.GetPOV() == 180) {
+    climb1.Set(0.1);
+    climb2.Set(0.1);
+  }
+  if(xbox_driver.GetPOV() == 270) {
+    climb1.Set(-0.3);
+    climb2.Set(-0.3);
+  }
+  if(xbox_driver.GetPOV() == 90) {
+    climb1.Set(0.3);
+    climb2.Set(0.3);
+  }
   SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
 
   if(xbox_operator.GetAButton()) {
