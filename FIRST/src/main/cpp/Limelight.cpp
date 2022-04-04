@@ -45,8 +45,6 @@ void Robot::line_up(float set_point) {
   low_feed.Set(0);
   intake.Set(0);
   lift.Set(0);
-  climb1.Set(0);
-  climb2.Set(0);
   limelight_set("ledMode", 3); //LED on
   timer.Stop();
   timer.Reset();
