@@ -63,7 +63,7 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-  float distance = 30; //Initialize auto values
+  float distance = 35; //Initialize auto values
   float speed = 0.2;
   
   //Start shooter PID
@@ -123,7 +123,7 @@ void Robot::AutonomousPeriodic() {
     shooting = false;
   }
 
-  //After shooting, drive back some more
+  /*//After shooting, drive back some more
   if(abs(left_en.GetPosition() - l_start) < 5 
   && timer.HasElapsed(4_s)
   && !shooting) {
@@ -143,7 +143,7 @@ void Robot::AutonomousPeriodic() {
   else if(!shooting) {
     right_f.Set(0);
     right_b.Set(0);
-  }
+  }*/
 }
 
 void Robot::TeleopInit() {
@@ -156,8 +156,8 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
   //Drivetrain
-  float mult = 0.4; //Reduce speed
-  float brake = 0.05; //Brake
+  float mult = 0.5; //Reduce speed
+  float brake = 0.000001; //Brake
   if(!reversed) {
     left_f.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0) + brake);
     left_b.Set(xbox_driver.GetRightY() * mult * (1 - xbox_driver.GetRightBumper() / 2.0) + brake);
@@ -214,17 +214,12 @@ void Robot::TeleopPeriodic() {
   float limit_down = 100;
   float range = 30;
   //Normal range
-  if(climb_en.GetPosition() < limit_down - range && climb_en.GetPosition() > limit_up + range) {
+  //if(climb_en.GetPosition() < limit_down && climb_en.GetPosition() > limit_up) {
     climb1.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
     + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
     climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
     + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
-  }
-  //Slow range
-  else if(climb_en.GetPosition() < limit_down && climb_en.GetPosition() > limit_up) {
-    climb1.Set((xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()) * 0.25);
-    climb2.Set((xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()) * 0.25);
-  }
+  /*}
   //Stops
   else {
     if(climb_en.GetPosition() > 0) {
@@ -251,7 +246,7 @@ void Robot::TeleopPeriodic() {
   if(xbox_driver.GetPOV() == 90) {
     climb1.Set(0.3);
     climb2.Set(0.3);
-  }
+  }*/
   SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
 
   if(xbox_operator.GetAButton()) {
@@ -270,7 +265,11 @@ void Robot::TeleopPeriodic() {
   if(xbox_operator.GetBackButton()) {
     limelight_set("ledMode", 1);
   }
-}
+
+  if(xbox_driver.GetStartButton()) {
+    limelight_set("ledMode", 0);
+  }
+} 
 
 void Robot::DisabledInit() {}
 
