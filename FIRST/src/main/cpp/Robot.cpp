@@ -210,16 +210,22 @@ void Robot::TeleopPeriodic() {
     SmartDashboard::PutNumber("Offset", SmartDashboard::GetNumber("Offset", 0) - 0.01);
   }
 
-  float limit_up = -115;
-  float limit_down = 100;
+  float limit_up = -114;
+  float limit_down = 103;
+  float limit_low = (1 - xbox_driver.GetYButton()) * 4;
   float range = 30;
   //Normal range
-  //if(climb_en.GetPosition() < limit_down && climb_en.GetPosition() > limit_up) {
+  if(climb_en.GetPosition() < limit_down - range && climb_en.GetPosition() > limit_up + range) {
     climb1.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
     + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
     climb2.Set(xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()
     + xbox_operator.GetLeftY() * xbox_operator.GetYButton());
-  /*}
+  }
+  //Slow
+  else if(climb_en.GetPosition() < limit_down && climb_en.GetPosition() > limit_up + limit_low) {
+    climb1.Set((xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()) * 0.5);
+    climb2.Set((xbox_driver.GetRightTriggerAxis() - xbox_driver.GetLeftTriggerAxis()) * 0.5);
+  }
   //Stops
   else {
     if(climb_en.GetPosition() > 0) {
@@ -246,7 +252,7 @@ void Robot::TeleopPeriodic() {
   if(xbox_driver.GetPOV() == 90) {
     climb1.Set(0.3);
     climb2.Set(0.3);
-  }*/
+  }
   SmartDashboard::PutNumber("Climb", climb_en.GetPosition());
 
   if(xbox_operator.GetAButton()) {
